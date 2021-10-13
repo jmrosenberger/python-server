@@ -1,10 +1,9 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-from animals import get_all_animals, get_single_animal, create_animal
-from locations import get_all_locations, get_single_location, create_location
-from employees import get_all_employees, get_single_employee, create_employee
-from customers import get_all_customers, get_single_customer, create_customer
-
+from animals import get_all_animals, get_single_animal, create_animal, delete_animal
+from locations import get_all_locations, get_single_location, create_location, delete_location
+from employees import get_all_employees, get_single_employee, create_employee, delete_employee
+from customers import get_all_customers, get_single_customer, create_customer, delete_customer
 
 
 # Here's a class. It inherits from another class.
@@ -12,6 +11,11 @@ from customers import get_all_customers, get_single_customer, create_customer
 # work together for a common purpose. In this case, that
 # common purpose is to respond to HTTP requests from a client.
 class HandleRequests(BaseHTTPRequestHandler):
+    # This is a Docstring it should be at the beginning of all classes and functions
+    # It gives a description of the class or function
+    """Controls the functionality of any GET, PUT, POST, DELETE requests to the server
+    """
+
     def parse_url(self, path):
         # Just like splitting a string in JavaScript. If the
         # path is "/animals/1", the resulting list will
@@ -33,12 +37,8 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         return (resource, id)  # This is a tuple
 
-    # This is a Docstring it should be at the beginning of all classes and functions
-    # It gives a description of the class or function
-    """Controls the functionality of any GET, PUT, POST, DELETE requests to the server
-    """
-
     # Here's a class function
+
     def _set_headers(self, status):
         # Notice this Docstring also includes information about the arguments passed to the function
         """Sets the status code, Content-Type and Access-Control-Allow-Origin
@@ -67,6 +67,9 @@ class HandleRequests(BaseHTTPRequestHandler):
     # Here's a method on the class that overrides the parent's method.
     # It handles any GET request.
     def do_GET(self):
+        """Handles GET requests to the server
+        """
+        # Set the response code to 'Ok'
         self._set_headers(200)
         response = {}  # Default response
 
@@ -102,6 +105,9 @@ class HandleRequests(BaseHTTPRequestHandler):
 
 
     def do_POST(self):
+        """Handles POST requests to the server
+        """
+        # Set response code to 'Created'
         self._set_headers(201)
         content_len = int(self.headers.get('content-length', 0))
         post_body = self.rfile.read(content_len)
@@ -142,6 +148,32 @@ class HandleRequests(BaseHTTPRequestHandler):
         """Handles PUT requests to the server
         """
         self.do_POST()
+
+    def do_DELETE(self):
+        """Handles DELETE requests to the server
+        """
+        # Set a 204 response code
+        self._set_headers(204)
+
+        # Parse the URL
+        (resource, id) = self.parse_url(self.path)
+
+        # Delete a single animal from the list
+        if resource == "animals":
+            delete_animal(id)
+
+        if resource == "customers":
+            delete_customer(id)
+
+        if resource == "employees":
+            delete_employee(id)
+
+        if resource == "locations":
+            delete_location(id)
+
+        # Encode the new animal and send in response
+        self.wfile.write("".encode())
+
 
 
 # This function is not inside the class. It is the starting
