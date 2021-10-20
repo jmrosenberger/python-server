@@ -6,51 +6,61 @@ EMPLOYEES = [
     {
         "id": 1,
         "name": "Jessica Younker",
-        "email": "jessica@younker.com",
+        "address": "1111 founders way",
+        "location_id": 1
     },
     {
         "id": 2,
         "name": "Jordan Nelson",
-        "email": "jordan@nelson.com",
+        "address": "2222 founders way",
+        "location_id": 2
     },
     {
         "id": 3,
         "name": "Zoe LeBlanc",
-        "email": "zoe@leblanc.com",
+        "address": "founders way",
+        "location_id": 1
     },
     {
         "name": "Meg Ducharme",
-        "email": "meg@ducharme.com",
+        "address": "3333 founders way",
+        "location_id": 2,
         "id": 4,
     },
     {
         "name": "Hannah Hall",
-        "email": "hannah@hall.com",
+        "address": "4444 founders way",
+        "location_id": 1,
         "id": 5,
     },
     {
         "name": "Emily Lemmon",
-        "email": "emily@lemmon.com",
+        "address": "5555 founders way",
+        "location_id": 2,
         "id": 6,
     },
     {
         "name": "Jordan Castelloe",
-        "email": "jordan@castelloe.com",
+        "address": "6666 founders way",
+        "location_id": 1,
         "id": 7,
     },
     {
         "name": "Leah Gwin",
-        "email": "leah@gwin.com",
+        "address": "7777 founders way",
+        "location_id": 2,
         "id": 8,
     },
     {
         "name": "Caitlin Stein",
-        "email": "caitlin@stein.com",
+        "address": "8888 founders way",
+        "location_id": 1,
         "id": 9,
     },
     {
         "name": "Greg Korte",
-        "email": "greg@korte.com",
+        "address": "0000 founders way",
+        "location_id": 1,
         "id": 10,
     }
 ]
@@ -165,3 +175,29 @@ def update_employee(id, new_employee):
             # Found the employee. Update the value.
             EMPLOYEES[index] = new_employee
             break
+
+def get_employees_by_location(location_id):
+
+    with sqlite3.connect("./kennel.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        # Write the SQL query to get the information you want
+        db_cursor.execute("""
+        select
+            e.id,
+            e.name,
+            e.address,
+            e.location_id
+        from Employee e
+        WHERE e.location_id = ?
+        """, ( location_id, ))
+
+        employees = []
+        dataset = db_cursor.fetchall()
+
+        for row in dataset:
+            employee = Employee(row['id'], row['name'], row['address'], row['location_id'])
+            employees.append(employee.__dict__)
+
+    return json.dumps(employees)
