@@ -66,3 +66,13 @@ WHERE a.id = 2
 
 INSERT INTO `Animal` VALUES (null, "Daps", "Kennel", "Boxer", 2, 2);
 
+SELECT
+	e.id,
+	e.name,
+	e.address,
+	e.location_id,
+	l.name location_name,
+	l.address location_address
+FROM Employee e
+JOIN Location l
+	ON l.id = e.location_id;
