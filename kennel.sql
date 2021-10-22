@@ -76,3 +76,12 @@ SELECT
 FROM Employee e
 JOIN Location l
 	ON l.id = e.location_id;
+
+
+SELECT * 
+FROM Animal a 
+ORDER BY id DESC;
+
+UPDATE Animal a
+SET location_id = 2
+WHERE animal.id = 8
